@@ -4,7 +4,7 @@ Built with Google Agent Development Kit
 """
 
 __version__ = "1.0.0"
-__author__ = "Your Name"
+__author__ = "Sridevi V"
 
 from .core import UserJourney, ConversationContext, get_user, get_context, get_greeting
 from .agents import (
