@@ -7,7 +7,7 @@ import logging
 
 # Version
 VERSION = "1.0.0"
-AUTHOR = "Your Name"
+AUTHOR = "Sridevi"
 
 # API Configuration
 def get_api_key():
