@@ -1,0 +1,20 @@
+# Core Dependencies
+google-adk>=0.1.0
+google-generativeai>=0.3.0
+
+# Image Processing
+Pillow>=9.0.0
+
+# Audio Processing
+SpeechRecognition>=3.10.0
+pydub>=0.25.1
+librosa>=0.10.0
+soundfile>=0.12.1
+
+# Document Processing
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+PyPDF2>=3.0.0
+
+# Note: FFmpeg required for audio conversion
+# Install: apt-get install ffmpeg (Linux) or brew install ffmpeg (Mac)
