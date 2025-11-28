@@ -1,0 +1,183 @@
+# MindMate AI - Project-Specific .gitignore
+
+# ============================================================================
+# SECRETS & API KEYS (CRITICAL)
+# ============================================================================
+# Never commit API keys or credentials
+GOOGLE_API_KEY
+.env
+*.key
+secrets.json
+kaggle_secrets.py
+api_credentials.txt
+
+# ============================================================================
+# USER DATA & PRIVACY
+# ============================================================================
+# User journey data, conversation history, personal info
+user_journeys.pkl
+user_journeys.json
+conversation_contexts.pkl
+conversation_contexts.json
+user_data/
+session_data/
+*.userdata
+
+# ============================================================================
+# UPLOADED FILES (Temporary Processing)
+# ============================================================================
+# Files uploaded by users for analysis
+/tmp/uploaded_*
+/tmp/upload_*
+uploaded_food.*
+uploaded_audio.*
+temp_uploads/
+user_uploads/
+
+# Audio files (user recordings)
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.flac
+audio_recordings/
+
+# Image files (user food photos)
+uploaded_images/
+food_photos/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+
+# Document files (user documents)
+uploaded_docs/
+*.pdf
+*.docx
+*.doc
+*.txt
+*.ipynb
+
+# ============================================================================
+# ADK GENERATED FILES
+# ============================================================================
+# ADK project artifacts
+mindmateAI/
+adk_config.json
+.adk/
+adk_sessions/
+adk_logs/
+
+# ============================================================================
+# LOGS & METRICS
+# ============================================================================
+# Runtime logs and performance data
+mindmate.log
+agent_*.log
+error_logs/
+metrics.json
+latencies.json
+performance_*.json
+
+# ============================================================================
+# JUPYTER & KAGGLE SPECIFIC
+# ============================================================================
+# Jupyter checkpoints
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# Kaggle notebook outputs
+/kaggle/
+/output/
+
+# ============================================================================
+# PYTHON ARTIFACTS
+# ============================================================================
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================================================
+# AUDIO PROCESSING ARTIFACTS
+# ============================================================================
+# FFmpeg/pydub temporary files
+*.ffmpeg
+ffmpeg_temp/
+audio_conversions/
+
+# ============================================================================
+# TESTING & DEVELOPMENT
+# ============================================================================
+# Test outputs
+test_results/
+test_audio/
+test_images/
+test_documents/
+test_user_data/
+
+# ============================================================================
+# OS & EDITOR FILES
+# ============================================================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# ============================================================================
+# BACKUP FILES
+# ============================================================================
+# Backups of user data or models
+backup_*/
+*.backup
+*.bak
+*.old
+
+# ============================================================================
+# MODEL & CACHE FILES
+# ============================================================================
+# Cached model responses or embeddings
+model_cache/
+gemini_cache/
+*.cache
+
+# ============================================================================
+# SPECIFIC TO MINDMATE AI
+# ============================================================================
+# Gamification data
+badges.json
+streaks.json
+points_history.json
+
+# Meal planning data
+meal_preferences.json
+meal_history.json
+
+# Communication analysis data
+communication_history.json
+voice_samples/
+
+# Stress game data
+game_scores.json
+quiz_results.json
