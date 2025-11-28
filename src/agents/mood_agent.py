@@ -1,8 +1,3 @@
-
-# ============================================================================
-# CELL 4: AGENT 1 - MOOD AGENT
-# ============================================================================
-
 def analyze_mood(user_id: str, message: str, stress_level: int = 5) -> Dict:
     """
     Analyze user's emotional state and provide personalized support.
@@ -101,3 +96,4 @@ def analyze_mood(user_id: str, message: str, stress_level: int = 5) -> Dict:
     }
 
 print("✅ Agent 1: Mood Agent ready")
+
