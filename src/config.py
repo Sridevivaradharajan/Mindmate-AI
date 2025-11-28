@@ -1,82 +1,102 @@
 """
-Configuration settings for MindMate AI
+Configuration management for Mindmate AI.
+
+This module handles API keys, logging, and global settings.
 """
 
 import os
 import logging
+from typing import Optional
 
-# Version
-VERSION = "1.0.0"
-AUTHOR = "Sridevi"
+# ============================================================================
+# API CONFIGURATION
+# ============================================================================
 
-# API Configuration
-def get_api_key():
-    """Get Google API key from environment or Kaggle secrets."""
+def get_api_key() -> str:
+    """
+    Get Google API key from environment variable.
+    
+    Returns:
+        str: Google API key
+        
+    Raises:
+        ValueError: If API key is not set
+    """
     api_key = os.getenv("GOOGLE_API_KEY")
-    
-    if not api_key:
-        try:
-            from kaggle_secrets import UserSecretsClient
-            api_key = UserSecretsClient().get_secret("GOOGLE_API_KEY")
-        except:
-            pass
-    
     if not api_key:
         raise ValueError(
-            "GOOGLE_API_KEY not found. Please set it as an environment variable:\n"
-            "  export GOOGLE_API_KEY='your-key-here'\n"
-            "Or add it to Kaggle secrets if running on Kaggle."
+            "GOOGLE_API_KEY environment variable not set. "
+            "Get your key from: https://aistudio.google.com/apikey"
         )
-    
     return api_key
 
-# Model Configuration
-GEMINI_MODEL = "gemini-2.5-flash"
-MAX_OUTPUT_TOKENS = 2048
-TEMPERATURE = 0.3
 
-# File Limits
-MAX_FILE_SIZE_MB = 50
-MAX_PDF_PAGES = 50
-MAX_AUDIO_DURATION_SECONDS = 300
+# Set API key for Google Generative AI
+GOOGLE_API_KEY = get_api_key()
+os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "FALSE"
 
-# Supported File Types
-SUPPORTED_AUDIO_FORMATS = ['.wav', '.mp3', '.m4a', '.mp4', '.ogg', '.flac']
-SUPPORTED_IMAGE_FORMATS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
-SUPPORTED_DOCUMENT_FORMATS = ['.pdf', '.txt']
 
-# Logging Configuration
-LOG_LEVEL = logging.INFO
-LOG_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
 
-def setup_logging():
-    """Configure logging for the application."""
+def setup_logging(level: str = "INFO") -> logging.Logger:
+    """
+    Configure logging for Mindmate AI.
+    
+    Args:
+        level: Logging level (DEBUG, INFO, WARNING, ERROR)
+        
+    Returns:
+        logging.Logger: Configured logger instance
+    """
     logging.basicConfig(
-        level=LOG_LEVEL,
-        format=LOG_FORMAT,
+        level=getattr(logging, level.upper()),
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         handlers=[logging.StreamHandler()]
     )
-    return logging.getLogger("MindMate")
+    return logging.getLogger("Mindmate")
 
-# Gamification Settings
-POINTS = {
-    "mood_check": 5,
-    "game": 10,
-    "communication": 15,
-    "meal_plan": 25,
-    "task_plan": 15,
-    "nutrition": 10,
-    "summary": 30
-}
 
-BADGES = {
-    "game_starter": {"threshold": 5, "emoji": "🎮", "name": "Game Starter"},
-    "game_master": {"threshold": 20, "emoji": "🎮🎮", "name": "Game Master"},
-    "game_legend": {"threshold": 50, "emoji": "🎮🎮🎮", "name": "Game Legend"},
-    "knowledge_seeker": {"threshold": 5, "emoji": "📚", "name": "Knowledge Seeker"},
-    "research_master": {"threshold": 20, "emoji": "📚📚", "name": "Research Master"}
-}
+# Global logger instance
+logger = setup_logging()
 
-# Agent Configuration
-AGENT_NAME = "mindmate"
-APP_NAME = "mindmate"
+
+# ============================================================================
+# APPLICATION SETTINGS
+# ============================================================================
+
+class Settings:
+    """Global application settings."""
+    
+    # Model configuration
+    MODEL_NAME = "gemini-2.5-flash"
+    MAX_TOKENS = 2048
+    TEMPERATURE = 0.7
+    
+    # File upload limits
+    MAX_FILE_SIZE_MB = 50
+    MAX_AUDIO_DURATION_SEC = 300  # 5 minutes
+    MAX_PDF_PAGES = 50
+    
+    # Supported file formats
+    SUPPORTED_IMAGE_FORMATS = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']
+    SUPPORTED_AUDIO_FORMATS = ['.wav', '.mp3', '.m4a', '.mp4', '.ogg', '.flac']
+    SUPPORTED_DOCUMENT_FORMATS = ['.pdf', '.txt']
+    
+    # Gamification
+    POINTS_PER_MOOD_ANALYSIS = 5
+    POINTS_PER_GAME = 10
+    POINTS_PER_COMMUNICATION_ANALYSIS = 15
+    POINTS_PER_MEAL_PLAN = 25
+    POINTS_PER_TASK_PLAN = 15
+    POINTS_PER_NUTRITION_ADVICE = 10
+    POINTS_PER_SUMMARY = 30
+    
+    # User data retention
+    MAX_EMOTION_HISTORY = 20
+    MAX_STRESS_HISTORY = 20
+
+
+settings = Settings()
