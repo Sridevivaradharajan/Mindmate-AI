@@ -1,26 +1,39 @@
 """
-Core data structures and utilities for MindMate AI
+Core data structures and user management for Mindmate AI.
+
+This module defines user journeys, conversation contexts, and global state management.
 """
 
 import time
-from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import Dict, List
 from datetime import datetime
+from collections import defaultdict
 
-from .config import setup_logging, POINTS
+from .config import logger
 
-# Setup logging
-logger = setup_logging()
 
-# Global metrics storage
+# ============================================================================
+# METRICS TRACKING
+# ============================================================================
+
 metrics = defaultdict(int)
 latencies = defaultdict(list)
 
-# Global user storage
-user_journeys: Dict[str, 'UserJourney'] = {}
-conversation_contexts: Dict[str, 'ConversationContext'] = {}
 
+def metric_inc(name: str, amt: int = 1):
+    """Increment a metric counter."""
+    metrics[name] += amt
+
+
+def metric_time(name: str, duration: float):
+    """Record latency for an operation."""
+    latencies[name].append(duration)
+
+
+# ============================================================================
+# USER DATA STRUCTURES
+# ============================================================================
 
 @dataclass
 class UserJourney:
@@ -44,7 +57,7 @@ class UserJourney:
 
 @dataclass  
 class ConversationContext:
-    """Tracks conversation context."""
+    """Tracks conversation context for multi-turn dialogues."""
     user_id: str
     session_id: str
     history: List[Dict] = field(default_factory=list)
@@ -53,8 +66,26 @@ class ConversationContext:
     last_agent: str = ""
 
 
+# ============================================================================
+# GLOBAL STATE MANAGEMENT
+# ============================================================================
+
+# In-memory stores (could be replaced with database in production)
+user_journeys: Dict[str, UserJourney] = {}
+conversation_contexts: Dict[str, ConversationContext] = {}
+
+
 def get_user(user_id: str, name: str = "Friend") -> UserJourney:
-    """Get or create user journey."""
+    """
+    Get or create user journey.
+    
+    Args:
+        user_id: Unique user identifier
+        name: User's display name
+        
+    Returns:
+        UserJourney: User's journey object
+    """
     if user_id not in user_journeys:
         user_journeys[user_id] = UserJourney(user_id=user_id, name=name)
         metric_inc("new_users")
@@ -63,18 +94,39 @@ def get_user(user_id: str, name: str = "Friend") -> UserJourney:
 
 
 def get_context(user_id: str, session_id: str = "default") -> ConversationContext:
-    """Get or create conversation context."""
+    """
+    Get or create conversation context.
+    
+    Args:
+        user_id: Unique user identifier
+        session_id: Session identifier
+        
+    Returns:
+        ConversationContext: Conversation context object
+    """
     key = f"{user_id}_{session_id}"
     if key not in conversation_contexts:
-        conversation_contexts[key] = ConversationContext(user_id=user_id, session_id=session_id)
+        conversation_contexts[key] = ConversationContext(
+            user_id=user_id, 
+            session_id=session_id
+        )
     return conversation_contexts[key]
 
 
 def get_greeting(user_id: str) -> str:
-    """Generate personalized greeting."""
+    """
+    Generate personalized greeting based on time and user history.
+    
+    Args:
+        user_id: Unique user identifier
+        
+    Returns:
+        str: Personalized greeting message
+    """
     user = get_user(user_id)
     hour = datetime.now().hour
     
+    # Time-based greeting
     if hour < 12:
         time_greet = "Good morning"
     elif hour < 17:
@@ -96,100 +148,16 @@ def get_greeting(user_id: str) -> str:
     return greeting
 
 
-def metric_inc(name: str, amt: int = 1):
-    """Increment a metric counter."""
-    metrics[name] += amt
-
-
-def metric_time(name: str, duration: float):
-    """Record a latency measurement."""
-    latencies[name].append(duration)
-
-
-def safe_file_read(file_path: str, expected_extensions: list = None) -> Dict:
-    """
-    Safely validate and read file with comprehensive error handling.
-    
-    Returns: {"status": "success/error", "path": str, "error": str}
-    """
-    import os
-    
-    try:
-        # Check if path exists
-        if not file_path or not os.path.exists(file_path):
-            return {
-                "status": "error",
-                "error": f"File not found: {file_path}",
-                "path": None
-            }
-        
-        # Check if it's a file
-        if not os.path.isfile(file_path):
-            return {
-                "status": "error", 
-                "error": f"Path is not a file: {file_path}",
-                "path": None
-            }
-        
-        # Check extension if specified
-        if expected_extensions:
-            ext = os.path.splitext(file_path)[1].lower()
-            if ext not in expected_extensions:
-                return {
-                    "status": "error",
-                    "error": f"Invalid file type {ext}. Expected: {expected_extensions}",
-                    "path": None
-                }
-        
-        # Check file size (limit to 50MB)
-        size = os.path.getsize(file_path)
-        if size > 50 * 1024 * 1024:
-            return {
-                "status": "error",
-                "error": f"File too large: {size / (1024*1024):.1f}MB (max 50MB)",
-                "path": None
-            }
-        
-        if size == 0:
-            return {
-                "status": "error",
-                "error": "File is empty",
-                "path": None
-            }
-        
-        return {"status": "success", "path": file_path, "error": None}
-        
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": f"File validation error: {str(e)}",
-            "path": None
-        }
-
-
 def get_system_status() -> Dict:
-    """Get complete system status."""
+    """
+    Get complete system status and metrics.
+    
+    Returns:
+        dict: System status including metrics and user stats
+    """
     return {
-        "status": "🟢 OPERATIONAL",
-        "version": "1.0.0",
-        "agents": {
-            "1": "Mood Agent - Emotional support",
-            "2": "Stress Buster - Fun games",
-            "3": "Interpersonal Coach - Text + Audio analysis",
-            "4": "Meal Planner - Recipes + Image detection",
-            "5": "Task Planner - Organization",
-            "6": "Nutrition Advisor - Dietary guidance",
-            "7": "Summarizer - Text/URL/PDF only"
-        },
-        "features": {
-            "mood_tracking": "✅ Emotion history & trends",
-            "stress_relief": "✅ Immediate game triggers",
-            "communication_coaching": "✅ Text + Audio file analysis",
-            "meal_planning": "✅ Text ingredients + Image detection",
-            "task_management": "✅ Priority & time estimates",
-            "nutrition_guidance": "✅ Goal-based advice",
-            "content_summarization": "✅ Text, URL, PDF"
-        },
+        "status": "operational",
+        "version": "1.0",
         "metrics": {
             "total_users": len(user_journeys),
             "total_requests": metrics.get("total_requests", 0),
