@@ -1,8 +1,3 @@
-
-# ============================================================================
-# CELL 5: AGENT 2 - STRESS BUSTER (GAMES)
-# ============================================================================
-
 def play_stress_game(user_id: str, game_type: str = "random") -> Dict:
     """
     Provide fun mental break games for stress relief.
