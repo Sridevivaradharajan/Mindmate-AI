@@ -1,20 +1,22 @@
-# Core Dependencies
+# Core dependencies
+google-generativeai>=0.8.0
 google-adk>=0.1.0
-google-generativeai>=0.3.0
+python-dotenv>=1.0.0
 
-# Image Processing
-Pillow>=9.0.0
-
-# Audio Processing
-SpeechRecognition>=3.10.0
-pydub>=0.25.1
-librosa>=0.10.0
-soundfile>=0.12.1
-
-# Document Processing
+# Agent dependencies
+speechrecognition>=3.10.0
+pillow>=10.0.0
+pypdf>=5.1.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0
-PyPDF2>=3.0.0
 
-# Note: FFmpeg required for audio conversion
-# Install: apt-get install ffmpeg (Linux) or brew install ffmpeg (Mac)
+# Optional - Audio analysis (Agent 3)
+librosa>=0.10.0
+soundfile>=0.12.0
+pydub>=0.25.0
+numpy>=1.24.0
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+pytest-dotenv>=0.5.2
